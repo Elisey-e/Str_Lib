@@ -1,18 +1,19 @@
 #include "functions.h"
 
 
-#include <iostream>
-#include <cstring>
- 
-int main ()
+/*!
+\file
+\brief Главный файл проекта с функцией main
+\authors Zhdanov_EA
+*/
+
+
+#include <stdio.h>
+#include <string.h>
+int main(void)
 {
-  char lotr[] = "_-=Властелин к0лец=-_";               // строка в которой будем искать символ 0
- 
-  std::cout << "Ищите кольцо всевластия в LOTR!!!n";
-  char * ring = strchr(lotr, '0');                     // поиск символа 0 в строке lotr
- 
-  std::cout << "Моя прелесть находится в "
-            << (ring - lotr + 1) << " квадратеn";     // определяем позицию символа
- 
-  return 0;
+    char str[80];
+    STRCPY(str, "this is an example");
+    PUTS(str);
+    return 0;
 }

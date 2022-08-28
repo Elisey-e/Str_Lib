@@ -1,68 +1,72 @@
 #include "functions.h"
 
 
+/*!
+\file
+\brief Исполняемый файл с библиотечными функциями
+*/
+
+
 int PUTS(const char* line)
 {
     if (line == NULL) {
         return EOF;
     }
-
-    // TODO: think how to implement puts with syscalls (like write),
-    //       or at least something smarter...
-    printf("%s\n", line);
-
+    for(int i = 0; line[i] != '\0'; ++i){
+        putchar(line[i]);
+    }
+    putchar('\n');
     return 1;
 }
 
-char* STRCHR(char* string, int symbol)
+char* STRCHR(char* str, int symbol)
 {
-    for (int i = 0; string[i] != '\0'; ++i){
-        if (string[i] == symbol){
-            return &string[i];
+    for (int i = 0; str[i] != '\0'; ++i){
+        if (str[i] == symbol){
+            return &str[i];
         }
     }
     return NULL;
 }
 
-size_t STRLEN(const char* string)
+size_t STRLEN(const char* str)
 {
     int length = 0;
-    while (string[length] != '\0') ++length;
+    while (str[length] != '\0') ++length;
 
     return length;
 }
 
 
-char* STRCPY (char* destination, const char* source)
+char* STRCPY (char* destptr, const char* srcpt)
 {
-    ASSERT(destination != NULL && source != NULL);
+    ASSERT(destptr != NULL && srcpt != NULL);
 
     int i = 0;
-    while (source[i] != '\0'){
-        destination[i] = source[i];
-        // TODO: think if this can be made faster with memcpy
+    while (srcpt[i] != '\0'){
+        destptr[i] = srcpt[i];
         ++i;
     }
-    destination[i] = '\0';
+    destptr[i] = '\0';
 
-    return destination;
+    return destptr;
 }
 
-char* STRNCPY (char* destination, const char* source, size_t n)
+char* STRNCPY (char* destptr, const char* srcpt, size_t num)
 {
-    ASSERT(destination != NULL && source != NULL);
+    ASSERT(destptr != NULL && srcpt != NULL);
 
     int i = 0;
-    while (i < (int) n) {
-        if (source[i] == '\0') {
+    while (i < (int) num) {
+        if (srcpt[i] == '\0') {
             break;
         }
-        destination[i] = source[i];
+        destptr[i] = srcpt[i];
         ++i;
     }
-    destination[i] = '\0';
+    destptr[i] = '\0';
 
-    return destination;
+    return destptr;
 }
 
 
@@ -88,21 +92,21 @@ char* STRNCAT(char* destptr, const char* srcptr, size_t num)
 }
 
 
-char* FGETS(char* string, int num, FILE* filestream)
+char* FGETS(char* str, int num, FILE* stream)
 {
-    if (string == NULL || filestream == NULL) {
+    if (str == NULL || stream == NULL) {
         return NULL;
     }
 
     char symb = 0;
     for (int i = 0; i != num; ++i){
-        fscanf(filestream, "%c", &symb);
-        string[i] = symb;
+        fscanf(stream, "%c", &symb);
+        str[i] = symb;
         if (symb == '\n') {
             break;
         }
     }
-    return string;
+    return str;
 }
 
 
@@ -117,4 +121,16 @@ char* STRDUP(const char* str){
 }
 
 
-size_t getline(char** lineptr, size_t* n, FILE* stream);
+size_t GETLINE(char** lineptr, size_t* num, FILE* stream)
+{
+    ASSERT(num == NULL || stream == NULL);
+    int len = (int) *num;
+    char str[len];
+    char* buffer = &str[len];
+    FGETS(buffer, len, stream);
+    if (lineptr == NULL){
+        return (size_t) buffer;
+    }
+    lineptr = &buffer;
+    return STRLEN(buffer);
+}
