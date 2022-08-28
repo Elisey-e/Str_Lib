@@ -123,14 +123,27 @@ char* STRDUP(const char* str){
 
 size_t GETLINE(char** lineptr, size_t* num, FILE* stream)
 {
-    ASSERT(num == NULL || stream == NULL);
+    ASSERT(num != NULL && stream != NULL);
+
     int len = (int) *num;
-    char str[len];
-    char* buffer = &str[len];
-    FGETS(buffer, len, stream);
-    if (lineptr == NULL){
-        return (size_t) buffer;
+    if (*lineptr == NULL){
+        *lineptr = (char*) calloc(len, sizeof(char));
     }
-    lineptr = &buffer;
-    return STRLEN(buffer);
+
+    int symb = 0;
+    int curr_len = 0;
+
+    for ( ; symb != '\n'; ++curr_len){
+        symb = getc(stream);
+        if (symb == EOF){
+            return len;
+        }
+        if (curr_len >= len){
+            *lineptr = (char*) realloc(*lineptr, ++len);
+        }
+        *lineptr[curr_len] = (char) symb;
+    }
+
+    *lineptr[curr_len] = '\0';
+    return len;
 }
