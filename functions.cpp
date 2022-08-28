@@ -114,7 +114,7 @@ char* STRDUP(const char* str){
     ASSERT(str != NULL);
 
     int len = (int) STRLEN(str);
-    char* buffer = (char*) malloc(len + 1);
+    char* buffer = (char*) calloc(len + 1, sizeof (char));
     STRCPY(buffer, str);
 
     return buffer;
@@ -125,25 +125,29 @@ size_t GETLINE(char** lineptr, size_t* num, FILE* stream)
 {
     ASSERT(num != NULL && stream != NULL);
 
-    int len = (int) *num;
+    int max_len = (int) *num;
     if (*lineptr == NULL){
-        *lineptr = (char*) calloc(len, sizeof(char));
+        *lineptr = (char*) calloc(max_len, sizeof(char));
     }
 
     int symb = 0;
     int curr_len = 0;
 
-    for ( ; symb != '\n'; ++curr_len){
+    while (symb != '\n') {
         symb = getc(stream);
         if (symb == EOF){
-            return len;
+            return max_len;
         }
-        if (curr_len >= len){
-            *lineptr = (char*) realloc(*lineptr, ++len);
-        }
-        *lineptr[curr_len] = (char) symb;
-    }
 
-    *lineptr[curr_len] = '\0';
-    return len;
+        (*lineptr)[curr_len] = (char) symb;
+        curr_len++;
+        if (curr_len >= max_len){
+            max_len++;
+            *lineptr = (char*) realloc(*lineptr, max_len);
+        }
+    }
+    max_len++;
+    *lineptr = (char*) realloc(*lineptr, max_len);
+    (*lineptr)[curr_len] = '\0';
+    return max_len;
 }
